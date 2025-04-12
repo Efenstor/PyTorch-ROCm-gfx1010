@@ -1,0 +1,23 @@
+From a72d9c3b7554b78a91a3d61b9041b3d1d7acf319 Mon Sep 17 00:00:00 2001
+From: Efenstor <Efenstor@users.noreply.github.com>
+Date: Sat, 12 Apr 2025 22:42:14 +0700
+Subject: [PATCH] Update ir.cpp: if it's not ROCm then it may be Vulkan
+
+Fix build for USE_ROCM=OFF USE_VULKAN=ON
+---
+ torch/csrc/jit/ir/ir.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/torch/csrc/jit/ir/ir.cpp b/torch/csrc/jit/ir/ir.cpp
+index a4e13f0f6f12f8..333d1dd2b89942 100644
+--- a/torch/csrc/jit/ir/ir.cpp
++++ b/torch/csrc/jit/ir/ir.cpp
+@@ -1179,7 +1179,7 @@ bool Node::hasSideEffects() const {
+     case prim::rpc_sync: // It represents RPC message sent.
+     case prim::rpc_remote: // It represents RPC message sent.
+     case aten::wait: // It can represent RPC message received.
+-#if !defined(USE_ROCM)
++#if !defined(USE_ROCM) && !defined(USE_VULKAN)
+     case cuda::set_stream:
+     case cuda::_set_device:
+     case cuda::_current_device:
