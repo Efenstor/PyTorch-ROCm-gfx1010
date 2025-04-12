@@ -3,7 +3,7 @@
 Pre-built wheels
 --
 
-Pre-built wheels with PyTorch 2.6 built with ROCm 6.3.4 are located in the "*prebuilt*" directory.
+Pre-built wheels of PyTorch 2.6.0, TorchVision 0.2.1 and TorchAudio 2.6.0 (built for ROCm 6.3.4) are located in the "*prebuilt*" directory.
 
 There is no guarantee that those will work with your particular configuration of video card, ROCm version, Python version, PyTorch version, kernel version, etc.
 
