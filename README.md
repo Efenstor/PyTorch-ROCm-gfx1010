@@ -1,5 +1,14 @@
 # PyTorch for Radeon RX 5600/5700 (gfx1010) on Debian 12
 
+Pre-built wheels
+--
+
+Pre-built wheels with PyTorch 2.6 built with ROCm 6.3.4 are located in the "*prebuilt*" directory.
+
+There is no guarantee that those will work with your particular configuration of video card, ROCm version, Python version, PyTorch version, kernel version, etc.
+
+For best results use the following instructions to build those wheels yourself.
+
 Introduction
 --
 
