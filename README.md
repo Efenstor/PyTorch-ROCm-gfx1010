@@ -151,7 +151,7 @@ Install the rest of the requirements:
 
 Run ComfyUI:
 
-    bin/python main.py --bf16-vae
+    bin/python ComfyUI/main.py --bf16-vae --reserve-vram 0.9
 
 There is a [big discussion](https://github.com/comfyanonymous/ComfyUI/issues/5759) on how to prevent freezing using VAE decoding with similar GPUs, in general the conclusion is that adding `--bf16-vae` should be enough. Another potentially useful variant is:
 
