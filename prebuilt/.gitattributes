@@ -1,0 +1,3 @@
+torch-2.6.0a0+git1eba9b3-cp311-cp311-linux_x86_64.whl filter=lfs diff=lfs merge=lfs -text
+torchaudio-2.6.0a0+d883142-cp311-cp311-linux_x86_64.whl filter=lfs diff=lfs merge=lfs -text
+torchvision-0.21.0+7af6987-cp311-cp311-linux_x86_64.whl filter=lfs diff=lfs merge=lfs -text
