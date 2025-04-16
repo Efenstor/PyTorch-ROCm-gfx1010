@@ -2,6 +2,7 @@
 
 1. [Install](install)
 2. [Run](run)
+3. [Useful options] (useful-options)
 3. [HIP out of memory problems](hip-out-of-memory-problems)
 
 ## Install
@@ -38,13 +39,20 @@ Run ComfyUI:
 
     PYTORCH_HIP_ALLOC_CONF=garbage_collection_threshold:0.9,max_split_size_mb:512 bin/python ComfyUI/main.py --reserve-vram 0.9
 
-If you want to launch the default browser automatically add *--auto-launch*.
+## Useful options
+
+1. KSampler preview while generating: *--preview-method auto*
+2. Launch the default browser automatically: *--auto-launch*
+
+For better previews download the [TAESD](https://github.com/madebyollin/taesd) encoders and decoders (taesd, taesdxl,taesd3, taef1) and put the *.pth* files into the *models/vae_approx* dir. You can also use these to decode latents.
 
 ## HIP out of memory problems
 
 Radeon XT 5600/5700 cards are pretty low on memory (6 GB) yet there are options which may help.
 
 First of all, stick to fp8 (8-bit) models (6.5 GB in size or smaller). Those are fast, more or less trouble-free and produce reasonable quality output.
+
+Second, use *VAE Decode Tiled* instead of the normal *VAE Decode* (ComfyUI will switch to it automatically but only when VAE Decode fails and that takes time).
 
 ### Turn on garbage collector
 
