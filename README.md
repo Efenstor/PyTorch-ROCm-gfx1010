@@ -10,7 +10,7 @@
 6. [Troubleshooting](#troubleshooting)
 7. [TorchVision](#torchvision)
 8. [TorchAudio](#torchaudio)
-11. [Extras](#extras)
+9. [Extras](#extras)
 
 For usage examples (chaiNNer, ComfyUI, etc.) see the \`usage\` directory.
 
@@ -118,13 +118,40 @@ The resulting wheel will be in the *dist* directory.
 
 ## Extras
 
+### bitsandbytes
+
+***STATUS: can be built but <u>does not work</u>***
+
+Support for ROCm HIP for [bitsandbytes](https://github.com/bitsandbytes-foundation/bitsandbytes) is in active development, in other words you can make it work if you're really tenacious.
+
+The build instructions as of April 2025 (or you can use the pre-build wheel from the *prebuilt* dir):
+
+    git clone https://github.com/bitsandbytes-foundation/bitsandbytes.git --branch=multi-backend-refactor
+    cd bitsandbytes
+    git reset --hard a0a95fd
+    mkdir build; cd build
+    cmake .. -DCOMPUTE_BACKEND=hip
+    make -j$(nproc)
+    cd ..
+    python3 setup.py bdist_wheel
+
+The resulting wheel will be in the *dist* directory.
+
+After installing the wheel you also have to install *triton v3.1.0*:
+
+    bin/pip install triton==3.1.0
+
 ### xformers
+
+***STATUS: <u>cannot be built</u>***
 
 So far the attempts to build **xformers v0.0.29.post3** for ROCm gfx1010 were unsuccessful.
 
 The main culprit is *composable_kernel_tiled*, which has no support for gfx1010, and although I manually added it to *include/ck/ck.hpp* and *include/ck_tile/core/config.hpp* I got stuck with a completely different errors, likely related to the versions of gcc/clang that are available in Debian 12.
 
 ### Torch for Vulkan
+
+***STATUS: can be built but <u>untested</u>***
 
 Torch can be successfully built with the Vulkan backend which in theory would allow it to run without ROCm, but in practice unlike PyTorch for ROCm it is not a drop-in replacement for PyTorch for CUDA and should be explicitly supported by the end-user software. Therefore the following instructions are more like a bonus for those who one day may find such a software.
 

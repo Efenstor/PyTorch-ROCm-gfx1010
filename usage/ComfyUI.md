@@ -3,7 +3,8 @@
 1. [Install](install)
 2. [Run](run)
 3. [Useful options] (useful-options)
-3. [HIP out of memory problems](hip-out-of-memory-problems)
+4. [freedesktop integration](freedesktop-integration)
+5. [HIP out of memory problems](hip-out-of-memory-problems)
 
 ## Install
 
@@ -46,24 +47,24 @@ Run ComfyUI:
 
 For better previews download the [TAESD](https://github.com/madebyollin/taesd) encoders and decoders (taesd, taesdxl,taesd3, taef1) and put the *.pth* files into the *models/vae_approx* dir. You can also use these to decode latents.
 
+## freedesktop integration
+
+In the ***comfyui_freedesktop*** directory you can find the files needed for the freedesktop integration (desktop icon):
+
+* *comfyui.svg*: copy to *~/.icons*
+* *comfyui.sh*: copy to the comfyui venv root directory
+* *comfyui.desktop*: copy to *~/.local/share/applications*, open and edit the Exec path (default is bin/comfyui)
+
 ## HIP out of memory problems
 
-Radeon XT 5600/5700 cards are pretty low on memory (6 GB) yet there are options which may help.
+Radeon XT 5600/5700 cards are pretty low on memory (6 GB) yet there are options which may help:
 
-First of all, stick to fp8 (8-bit) models (6.5 GB in size or smaller). Those are fast, more or less trouble-free and produce reasonable quality output.
+* Turn on the HIP garbage collector, which cleans VRAM of unused fragments. It is controllable via an environment variable `PYTORCH_HIP_ALLOC_CONF`. For example: `PYTORCH_HIP_ALLOC_CONF=garbage_collection_threshold:0.9,max_split_size_mb:512`, which means that the garbage collector will be activated once 90% of VRAM is full and the largest fragment size will be no larger than 512 MB.
 
-Second, use *VAE Decode Tiled* instead of the normal *VAE Decode* (ComfyUI will switch to it automatically but only when VAE Decode fails and that takes time).
+* Stick to fp8 (8-bit) models (6.5 GB in size or smaller). Those are fast, more or less trouble-free and produce reasonable quality output.
 
-### Turn on garbage collector
+* Use *VAE Decode Tiled* (tile size=128, overlap=64) instead of the normal *VAE Decode* (ComfyUI will switch to it automatically but only when VAE Decode fails and that takes time).
 
-First of all turn on the HIP garbage collector, it cleans VRAM of unused fragments. It is controllable via an environment variable `PYTORCH_HIP_ALLOC_CONF`. For example:
+* Use the *--lowvram* option which shifts some computation to CPU, therefore expect greatly increased processing times. For some operations, such as conversion or combining models, you have to use the *--lowvram* option, otherwise you'll get the \`HIP out of memory\` message.
 
-    PYTORCH_HIP_ALLOC_CONF=garbage_collection_threshold:0.9,max_split_size_mb:512
-
-In this example the garbage collector will be activated once 90% of VRAM is full and the largest fragment size will be no larger than 512 MB.
-
-The second option is to use the *--lowvram* option which shifts some computation to CPU, therefore expect greatly increased processing times, but at least in theory you won't have the \`HIP out of memory\` messages.
-
-### PyTorch cross attention
-
-Using PyTorch's internal cross attention (the *--use-pytorch-cross-attention* option) seems to occupy additional uncounted VRAM which may result in the \`HIP out of memory\` messages. The solution is to use *--use-split-cross-attention* or *--use-quad-cross-attention* (default).
+* Avoid PyTorch's internal cross attention (the *--use-pytorch-cross-attention* option), which seems to occupy additional uncounted VRAM. The solution is to use *--use-split-cross-attention* or *--use-quad-cross-attention* (default).

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=ComfyUI
+Icon=comfyui.svg
+Exec=bin/comfyui/comfyui.sh
+Terminal=true
+Categories=Graphics;
