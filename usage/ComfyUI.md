@@ -1,10 +1,10 @@
 # Using with ComfyUI
 
-1. [Install](install)
-2. [Run](run)
-3. [Useful options](useful-options)
-4. [freedesktop integration](freedesktop-integration)
-5. [HIP out of memory problems](hip-out-of-memory-problems)
+1. [Install](#install)
+2. [Run](#run)
+3. [Useful options](#useful-options)
+4. [freedesktop integration](#freedesktop-integration)
+5. [HIP out of memory problems](#hip-out-of-memory-problems)
 
 ## Install
 
