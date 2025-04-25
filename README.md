@@ -12,7 +12,7 @@
 8. [TorchAudio](#torchaudio)
 9. [Extras](#extras)
 
-For usage examples (chaiNNer, ComfyUI, etc.) see the \`usage\` directory.
+For usage examples (chaiNNer, ComfyUI, etc.) see the \`[usage](usage)\` directory.
 
 ## Pre-built wheels
 
