@@ -55,6 +55,8 @@ In the ***comfyui_freedesktop*** directory you can find the files needed for the
 * *comfyui.sh*: copy to the comfyui venv root directory
 * *comfyui.desktop*: copy to *~/.local/share/applications*, open and edit the Exec path (default is bin/comfyui)
 
+If you don't need the browser auto-launch add *--no-auto-launch* to the Exec line in *comfyui.desktop*.
+
 ## HIP out of memory problems
 
 Radeon XT 5600/5700 cards are pretty low on memory (6 GB) yet there are options which may help:
