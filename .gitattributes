@@ -1,0 +1,4 @@
+prebuilt filter=lfs diff=lfs merge=lfs -text
+prebuilt/torch-2.7.0a0+git1341794-cp311-cp311-linux_x86_64.whl filter=lfs diff=lfs merge=lfs -text
+prebuilt/torchvision-0.22.0+9eb57cd-cp311-cp311-linux_x86_64.whl filter=lfs diff=lfs merge=lfs -text
+prebuilt/torchaudio-2.7.0a0+654fee8-cp311-cp311-linux_x86_64.whl filter=lfs diff=lfs merge=lfs -text

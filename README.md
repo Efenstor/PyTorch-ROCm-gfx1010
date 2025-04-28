@@ -16,7 +16,7 @@ For usage examples (chaiNNer, ComfyUI, etc.) see the \`[usage](usage)\` director
 
 ## Pre-built wheels
 
-Pre-built wheels of PyTorch 2.6.0, TorchVision 0.2.1 and TorchAudio 2.6.0 (built for ROCm 6.3.4 and Python 3.11) are located in the \`prebuilt\` directory.
+Pre-built wheels of PyTorch, TorchVision and TorchAudio (built for ROCm 6.3.4 and Python 3.11) are located in the \`prebuilt\` directory.
 
 There is no guarantee that those will work with your particular configuration of video card, ROCm version, Python version, PyTorch version, kernel version, etc.
 
@@ -53,40 +53,64 @@ Download and install *amdgpu-install* as described [here](https://rocm.docs.amd.
 
 Then install all the rest of the requirements using the usual `apt install`.
 
-## Prepare
+## Build
+
+The following instructions are given for PyTorch 2.7, when a new version arrives just replace 2.7 with the new numbers.
+
+*IMPORTANT: always create a new clean venv to build a new version of pytorch to avoid dependency conflicts.*
 
 Create and activate a venv:
 
-    python3 -m venv pytorch
-    cd pytorch
+    python -m venv pytorch-2.7
+    cd pytorch-2.7
     source bin/activate
 
 Later to exit the venv execute `deactivate`.
 
-## Build
+Clone the repo:
 
-The following instructions are given for PyTorch 2.6, when a new version arrives just replace 2.6 with the new numbers.
+    git clone https://github.com/pytorch/pytorch.git --branch=release/2.7 --recurse-submodules pytorch-release-2.7-git
 
-    git clone https://github.com/pytorch/pytorch.git --branch=release/2.6 --recurse-submodules pytorch-release-2.6-git
-    cd pytorch-release-2.6-git
+Prepare:
+
+    cd pytorch-release-2.7-git
     pip install -r requirements.txt
-    python3 tools/amd_build/build_amd.py
-    MAX_JOBS=$(nproc) CMAKE_BUILD_PARALLEL_LEVEL=$(nproc) CMAKE_POLICY_VERSION_MINIMUM=3.5 PYTORCH_ROCM_ARCH=gfx1010 python3 setup.py bdist_wheel
+    python tools/amd_build/build_amd.py
 
-The resulting wheel will be in the *dist* directory. Be patient, build takes a very long time even on modern 8-core CPUs.
+Build:
+
+    MAX_JOBS=$(nproc) CMAKE_BUILD_PARALLEL_LEVEL=$(nproc) PYTORCH_ROCM_ARCH=gfx1010 python3 setup.py bdist_wheel
+
+The resulting wheel will be in the *dist* directory. Be patient, build takes a very long time.
+
+If build fails see the Troubleshooting section below, then execute the build command again.
 
 To install the built wheel execute inside a venv:
 
-    pip install pytorch-release-2.6-git/dist/torch-2.6.0a0+git1eba9b3-cp311-cp311-linux_x86_64.whl
+    pip install pytorch-release-2.7-git/dist/torch-2.7.0a0+git1341794-cp311-cp311-linux_x86_64.whl
 
 ## Troubleshooting
 
-If you get \`all warnings being treated as errors\` messages then do:
+### CMake version errors
 
-    echo "set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=maybe-uninitialized -Wno-error=uninitialized -Wno-error=restrict")" >> third_party/fbgemm/CMakeLists.txt
-    echo "set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=maybe-uninitialized -Wno-error=uninitialized -Wno-error=restrict")" >> third_party/fbgemm/CMakeLists.txt
+*CMAKE_POLICY_VERSION_MINIMUM=3.5* have to be added to the enviromnent.
 
-If you get \`error: use of undeclared identifier 'CK_BUFFER_RESOURCE_3RD_DWORD'\` messages then you have to apply patches (read [here](https://github.com/ROCm/composable_kernel/issues/775#issuecomment-2725632592) about this issue):
+Compile with this command instead:
+
+MAX_JOBS=$(nproc) CMAKE_BUILD_PARALLEL_LEVEL=$(nproc) CMAKE_POLICY_VERSION_MINIMUM=3.5 PYTORCH_ROCM_ARCH=gfx1010 python3 setup.py bdist_wheel
+
+### \`all warnings being treated as errors\`
+
+C and CXX flags have to be added to lessen the error policy.
+
+To add execute:
+
+    echo "set(CMAKE_C_FLAGS \"\${CMAKE_CXX_FLAGS} -Wno-error=maybe-uninitialized -Wno-error=uninitialized -Wno-error=restrict\")" >> third_party/fbgemm/CMakeLists.txt
+    echo "set(CMAKE_CXX_FLAGS \"\${CMAKE_CXX_FLAGS} -Wno-error=maybe-uninitialized -Wno-error=uninitialized -Wno-error=restrict\")" >> third_party/fbgemm/CMakeLists.txt
+
+### \`error: use of undeclared identifier 'CK_BUFFER_RESOURCE_3RD_DWORD'\`
+
+Apply patches (read [here](https://github.com/ROCm/composable_kernel/issues/775#issuecomment-2725632592) about this issue):
 
     git apply --directory=third_party/composable_kernel patches/5465fcc9e25ab9828b9d34ce5d341a127ff8ea9e.patch
     git apply --directory=third_party/composable_kernel patches/88952b6d4e6bea810aaa4c063bdaf5b8252acb1c.patch
@@ -100,9 +124,9 @@ If a patch cannot be applied it is probably not needed for your version of Torch
 
 This built should be done in a venv with the previously built pytorch wheel installed.
 
-    git clone https://github.com/pytorch/vision.git --branch=release/0.21 --recurse-submodules vision-release-0.21-git
-    cd vision-release-0.21-git
-    MAX_JOBS=$(nproc) CMAKE_BUILD_PARALLEL_LEVEL=$(nproc) CMAKE_POLICY_VERSION_MINIMUM=3.5 python3 setup.py bdist_wheel
+    git clone https://github.com/pytorch/vision.git --branch=release/0.22 --recurse-submodules vision-release-0.22-git
+    cd vision-release-0.22-git
+    MAX_JOBS=$(nproc) CMAKE_BUILD_PARALLEL_LEVEL=$(nproc) python3 setup.py bdist_wheel
 
 The resulting wheel will be in the *dist* directory.
 
@@ -110,9 +134,9 @@ The resulting wheel will be in the *dist* directory.
 
 This built should be done in a venv with the previously built pytorch wheel installed.
 
-    git clone https://github.com/pytorch/audio.git --branch=release/2.6 --recurse-submodules audio-release-2.6-git
-    cd audio-release-2.6-git
-    MAX_JOBS=$(nproc) CMAKE_BUILD_PARALLEL_LEVEL=$(nproc) CMAKE_POLICY_VERSION_MINIMUM=3.5 python3 setup.py bdist_wheel
+    git clone https://github.com/pytorch/audio.git --branch=release/2.7 --recurse-submodules audio-release-2.7-git
+    cd audio-release-2.7-git
+    MAX_JOBS=$(nproc) CMAKE_BUILD_PARALLEL_LEVEL=$(nproc) python3 setup.py bdist_wheel
 
 The resulting wheel will be in the *dist* directory.
 
