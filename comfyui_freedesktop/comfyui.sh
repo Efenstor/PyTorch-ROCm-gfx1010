@@ -10,11 +10,12 @@ max_split_size=512
 preview_method=auto
 auto_launch=1
 garbage_collector=1
+attention="--use-split-cross-attention"
 
 cd "$(dirname $0)"
 
 # Parse the named parameters
-optstr="?hilar:s:p:"
+optstr="?hilar:s:p:q"
 while getopts $optstr opt
 do
   case "$opt" in
@@ -26,6 +27,7 @@ do
     r) reserve_vram="$OPTARG" ;;
     s) max_split_size="$OPTARG" ;;
     p) preview_method="$OPTARG" ;;
+    q) attention="--use-quad-cross-attention" ;;
     :) echo "Missing argument for -$OPTARG" >&2
        exit 1
        ;;
@@ -44,6 +46,7 @@ if [ "$help" ]; then
   echo "-r: garbage collector reserve_vram size (default=$reserve_vram)"
   echo "-s: garbage collector max_split_size size (default=$reserve_vram)"
   echo "-p: preview method (default=$preview_method)"
+  echo "-q: use sub-quadratic cross attention (may be slower)"
   exit
 fi
 
@@ -70,5 +73,6 @@ env $garbage_collector bin/python ComfyUI/main.py \
   $lowvram \
   --reserve-vram $reserve_vram \
   --preview-method $preview_method \
+  $attention \
   $auto_launch
 
