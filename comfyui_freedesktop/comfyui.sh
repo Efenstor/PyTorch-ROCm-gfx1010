@@ -15,7 +15,7 @@ attention="--use-split-cross-attention"
 cd "$(dirname $0)"
 
 # Parse the named parameters
-optstr="?hilar:s:p:q"
+optstr="?hilagr:s:p:q"
 while getopts $optstr opt
 do
   case "$opt" in
@@ -73,6 +73,8 @@ env $garbage_collector bin/python ComfyUI/main.py \
   $lowvram \
   --reserve-vram $reserve_vram \
   --preview-method $preview_method \
+  --fp8_e4m3fn-unet --fp8_e4m3fn-text-enc --bf16-vae \
+  --fast cublas_ops \
   $attention \
   $auto_launch
 
