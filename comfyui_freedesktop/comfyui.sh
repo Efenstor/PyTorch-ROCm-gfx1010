@@ -6,7 +6,7 @@
 # Defaults
 # (use anything for True or nothing for False)
 reserve_vram=0.9
-max_split_size=512
+max_split_size=1024
 preview_method=auto
 auto_launch=1
 garbage_collector=1
@@ -74,7 +74,7 @@ env $garbage_collector bin/python ComfyUI/main.py \
   --reserve-vram $reserve_vram \
   --preview-method $preview_method \
   --fp8_e4m3fn-unet --fp8_e4m3fn-text-enc --bf16-vae \
-  --fast cublas_ops \
+  --fast cublas_ops --disable-smart-memory \
   $attention \
   $auto_launch
 
