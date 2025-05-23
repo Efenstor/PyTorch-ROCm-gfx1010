@@ -17,22 +17,17 @@ Clone the ComfyUI repository:
 
     git clone https://github.com/comfyanonymous/ComfyUI.git
 
-Open the `ComfyUI/requirements.txt` file in a text editor and comment out *torch*, *torchvision* and *torchaudio* (keep *torchsde*):
-
-    #torch
-    torchsde
-    #torchvision
-    #torchaudio
-
 Install your torch, torchvision and torchaudio:
 
     bin/pip install <torch.whl> <torchvision.whl> <torchaudio.whl>
 
 Replace <torch.whl\> <torchvision.whl\> and <torchaudio.whl\> with paths to the wheels you built.
 
-Install the rest of the requirements:
+Install the ComfyUI requirements excluding torch, torchvision and torchaudio:
 
-    bin/pip install -r ComfyUI/requirements.txt
+    grep -vEi "torch|torchvision|torchaudio" ComfyUI/requirements.txt | bin/pip install -r /dev/stdin
+
+To simplify updating ComfyUI in the future you can use the \`comfyui_update.sh\` file from the \`comfyui_freedesktop\` directory, just copy it to the venv root directory and make it executable.
 
 ## Run
 
