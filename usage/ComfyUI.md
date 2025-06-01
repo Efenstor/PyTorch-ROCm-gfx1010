@@ -4,7 +4,7 @@
 2. [Run](#run)
 3. [Useful options](#useful-options)
 4. [freedesktop integration](#freedesktop-integration)
-5. [HIP out of memory problems](#hip-out-of-memory-problems)
+5. [HIP out of memory (OOM) problems](#hip-out-of-memory-oom-problems)
 
 ## Install
 
@@ -52,7 +52,7 @@ In the ***comfyui_freedesktop*** directory you can find the files needed for the
 
 If you don't need the browser auto-launch add *--no-auto-launch* to the Exec line in *comfyui.desktop*.
 
-## HIP out of memory problems
+## HIP out of memory (OOM) problems
 
 Radeon XT 5600/5700 cards are pretty low on memory (6 GB) yet there are options which may help:
 
@@ -64,4 +64,7 @@ Radeon XT 5600/5700 cards are pretty low on memory (6 GB) yet there are options 
 
 * Use the *--lowvram* option which shifts some computation to CPU, therefore expect greatly increased processing times. For some operations, such as conversion or combining models, you have to use the *--lowvram* option, otherwise you'll get the \`HIP out of memory\` message.
 
-* Avoid PyTorch's internal cross attention (the *--use-pytorch-cross-attention* option), which seems to occupy additional uncounted VRAM. The solution is to use *--use-split-cross-attention* or *--use-quad-cross-attention* (default).
+* Avoid PyTorch's internal cross attention (the *--use-pytorch-cross-attention* option), which seems to occupy additional uncounted VRAM. The solution is to use *--use-split-cross-attention* (may be faster in many cases) or *--use-quad-cross-attention* (default).
+
+* If you are getting OOM's with *--use-split-cross-attention* try *--use-quad-cross-attention*.
+
