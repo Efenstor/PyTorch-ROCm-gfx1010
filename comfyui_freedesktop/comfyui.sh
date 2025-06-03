@@ -12,15 +12,38 @@ preview_method=auto
 auto_launch=1
 garbage_collector=1
 attention="--use-split-cross-attention"
+profile_path="/sys/class/drm/card0/device/pp_power_profile_mode"
+profile_compute=5  # cat /sys/class/drm/card0/device/pp_power_profile_mode
+profile_default=0
 interactive=
 lowvram=
 dsm=
 custom=
 
+get_current_profile() {
+  echo $(cat "$1" | sed -n "s/ *\([0-9]*\).*\*.*/\1/p")
+}
+
+get_current_profile_name() {
+  echo $(cat "$1" | sed -n "s/.* \(.*\)\*.*/\1/p")
+}
+
+uninitialize() {
+  if [ "$new_profile" ]; then
+    echo "Restoring the old amdgpu profile: $prev_profile ($prev_profile_name)"
+    echo $prev_profile > "$profile_path"
+  fi
+}
+
+catchbreak() {
+  uninitialize
+  exit 1
+}
+
 cd "$(dirname $0)"
 
 # Parse the named parameters
-optstr="?hildagr:t:s:p:qc:"
+optstr="?hildagr:t:s:p:qoc:"
 while getopts $optstr opt
 do
   case "$opt" in
@@ -35,6 +58,7 @@ do
     s) max_split_size="$OPTARG" ;;
     p) preview_method="$OPTARG" ;;
     q) attention="--use-quad-cross-attention" ;;
+    o) switch_profile=1 ;;
     c) custom="$OPTARG" ;;
     :) echo "Missing argument for -$OPTARG" >&2
        exit 1 ;;
@@ -59,7 +83,12 @@ if [ "$help" ]; then
   echo "-s: garbage collector max_split_size size (MB, default=$max_split_size)"
   echo "-p: preview method (default=$preview_method)"
   echo "-q: use sub-quadratic cross attention (may be slower)"
+  echo "-o: switch the amdgpu profile to COMPUTE, see NOTE 1 below (default=$profile_compute)"
   echo "-c: custom parameters to be added to the ComfyUI command line"
+  echo "
+NOTE 1: For this option to work the profile file must be user-writable.
+  You can acheive this by making a startup script with the following command:
+  chmod a+w $profile_path"
   echo
   exit
 fi
@@ -74,7 +103,7 @@ fi
 
 # Interactive questions
 if [ "$interactive" ]; then
-  read -p "Use --lowvram? (needed only if you get the \`HIP out of memory\` errors) y/N " a
+  read -p "Use --lowvram? (very slow but helps against OOM errors) y/N " a
   if [ "$a" = 'y' ]; then
     lowvram="--lowvram"
   else
@@ -82,15 +111,35 @@ if [ "$interactive" ]; then
   fi
 fi
 
+# Try to get the current profile
+if [ "$switch_profile" ]; then
+  echo "Using amdgpu profile path: $profile_path"
+  prev_profile=$(get_current_profile "$profile_path")
+  if [ "$prev_profile" ]; then
+    prev_profile_name=$(get_current_profile_name "$profile_path")
+    echo "Current amdgpu profile: $prev_profile ($prev_profile_name)"
+    echo "Setting amdgpu profile: $profile_compute (COMPUTE)"
+    echo $profile_compute > "$profile_path"
+    new_profile=$(get_current_profile "$profile_path")
+    if [ $new_profile -eq $profile_compute ]; then
+      echo "COMPUTE profile was set successfully"
+    else
+      echo "COMPUTE profile cannot be set"
+      new_profile=
+    fi
+  fi
+fi
+
 # Execute
-env $garbage_collector bin/python ComfyUI/main.py \
+trap "catchbreak" INT
+env $garbage_collector \
+  bin/python ComfyUI/main.py \
   $lowvram \
   $dsm \
   --reserve-vram $reserve_vram \
   --preview-method $preview_method \
-  --fp8_e4m3fn-unet --fp8_e4m3fn-text-enc --bf16-vae \
   --fast cublas_ops \
   $attention \
   $custom \
   $auto_launch
-
+uninitialize
