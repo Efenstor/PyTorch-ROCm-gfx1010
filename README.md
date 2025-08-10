@@ -49,7 +49,14 @@ The resulting Python wheels were tested with [chaiNNer](https://github.com/chaiN
 
 To begin with you have to install ROCm. Unfortunately you have to trust AMD here: although ROCm is open-source building it from the source is another enormous task. Good news is that despite the instructions from AMD there is no actual need to install the proprietary amdgpu driver (amdgpu-dkms) and that the upcoming Debian 13 (trixie) will have ROCm in its repositories out of the box.
 
-Download and install *amdgpu-install* as described [here](https://rocm.docs.amd.com/projects/install-on-linux/en/latest/install/install-methods/amdgpu-installer/amdgpu-installer-debian.html). Then execute `apt install rocm` as root.
+Download and install *amdgpu-install* as described [here](https://rocm.docs.amd.com/projects/install-on-linux/en/latest/install/quick-start.html). Then execute `apt install rocm` as root.
+
+Download and unpack the missing RocBLAS libraries into */opt/rocm/lib/rocblas/library*:
+
+```
+wget https://github.com/Efenstor/PyTorch-ROCm-gfx1010/blob/main/prebuilt/rocblas_library_gfx1010.tar.gz
+tar xv -f rocblas_library_gfx1010.tar.gz -C /opt/rocm/lib/rocblas/library
+```
 
 Then install all the rest of the requirements using the usual `apt install`.
 
@@ -195,3 +202,7 @@ Additional environment variables to try (untested):
 
     USE_VULKAN_FP16_INFERENCE=ON
     USE_VULKAN_RELAXED_PRECISION=ON
+
+### TensileLibrary missing files
+
+Later versions of ROCm no longer include the RocBLAS TensileLibrary files for gfx1010. You can find those separately in the \`[prebuilt](prebuilt)\` directory as *rocblas_library_gfx1010.tar.gz*. Just unpack it into `/opt/rocm/lib/rocblas/library` (as root).
