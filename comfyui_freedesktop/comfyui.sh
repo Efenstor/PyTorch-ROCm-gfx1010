@@ -15,6 +15,7 @@ attention="--use-split-cross-attention"
 profile_path="/sys/class/drm/card0/device/pp_power_profile_mode"
 profile_compute=5  # cat /sys/class/drm/card0/device/pp_power_profile_mode
 profile_default=0
+cache_classic=
 interactive=
 lowvram=
 dsm=
@@ -43,7 +44,7 @@ catchbreak() {
 cd "$(dirname $0)"
 
 # Parse the named parameters
-optstr="?hildagr:t:s:p:qoc:"
+optstr="?hildagr:t:s:p:qvoc:"
 while getopts $optstr opt
 do
   case "$opt" in
@@ -57,7 +58,7 @@ do
     t) gc_threshold="$OPTARG" ;;
     s) max_split_size="$OPTARG" ;;
     p) preview_method="$OPTARG" ;;
-    q) attention="--use-quad-cross-attention" ;;
+    v) cache_classic="--cache-classic" ;;
     o) switch_profile=1 ;;
     c) custom="$OPTARG" ;;
     :) echo "Missing argument for -$OPTARG" >&2
@@ -83,6 +84,7 @@ if [ "$help" ]; then
   echo "-s: garbage collector max_split_size size (MB, default=$max_split_size)"
   echo "-p: preview method (default=$preview_method)"
   echo "-q: use sub-quadratic cross attention (may be slower)"
+  echo "-v: use classic (aggressive) caching"
   echo "-o: switch the amdgpu profile to COMPUTE, see NOTE 1 below (default=$profile_compute)"
   echo "-c: custom parameters to be added to the ComfyUI command line"
   echo "
@@ -138,7 +140,9 @@ env $garbage_collector \
   $dsm \
   --reserve-vram $reserve_vram \
   --preview-method $preview_method \
-  --fast cublas_ops \
+  --fast \
+  --disable-xformers \
+  $cache_classic \
   $attention \
   $custom \
   $auto_launch
