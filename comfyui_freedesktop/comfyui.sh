@@ -58,6 +58,7 @@ do
     t) gc_threshold="$OPTARG" ;;
     s) max_split_size="$OPTARG" ;;
     p) preview_method="$OPTARG" ;;
+    q) attention="--use-quad-cross-attention" ;;
     v) cache_classic="--cache-classic" ;;
     o) switch_profile=1 ;;
     c) custom="$OPTARG" ;;
