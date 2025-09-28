@@ -89,6 +89,7 @@ if [ "$help" ]; then
   echo "    1 = quad-cross-attention"
   echo "    2 = sage-attention"
   echo "    3 = pytorch-cross-attention"
+  echo "    4 = flash-attention"
   echo "-v: use classic (aggressive) caching"
   echo "-o: switch the amdgpu profile to COMPUTE, see NOTE 1 below (default=$profile_compute)"
   echo "-c: custom parameters to be added to the ComfyUI command line"
@@ -114,6 +115,7 @@ case "$attention" in
   1) attention="--use-quad-cross-attention" ;;
   2) attention="--use-sage-attention" ;;
   3) attention="--use-pytorch-cross-attention" ;;
+  4) attention="--use-flash-attention" ;;
 esac
 
 # Interactive questions
