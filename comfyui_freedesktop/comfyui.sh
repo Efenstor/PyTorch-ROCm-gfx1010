@@ -11,7 +11,7 @@ max_split_size=512
 preview_method=auto
 auto_launch=1
 garbage_collector=1
-attention="--use-split-cross-attention"
+attention=0
 profile_path="/sys/class/drm/card0/device/pp_power_profile_mode"
 profile_compute=5  # cat /sys/class/drm/card0/device/pp_power_profile_mode
 profile_default=0
@@ -44,7 +44,7 @@ catchbreak() {
 cd "$(dirname $0)"
 
 # Parse the named parameters
-optstr="?hildagr:t:s:p:qvoc:"
+optstr="?hildagr:t:s:p:q:voc:"
 while getopts $optstr opt
 do
   case "$opt" in
@@ -58,7 +58,7 @@ do
     t) gc_threshold="$OPTARG" ;;
     s) max_split_size="$OPTARG" ;;
     p) preview_method="$OPTARG" ;;
-    q) attention="--use-quad-cross-attention" ;;
+    q) attention="$OPTARG" ;;
     v) cache_classic="--cache-classic" ;;
     o) switch_profile=1 ;;
     c) custom="$OPTARG" ;;
@@ -84,7 +84,11 @@ if [ "$help" ]; then
   echo "-t: garbage collector threshold (0..1 VRAM, default=$gc_threshold)"
   echo "-s: garbage collector max_split_size size (MB, default=$max_split_size)"
   echo "-p: preview method (default=$preview_method)"
-  echo "-q: use sub-quadratic cross attention (may be slower)"
+  echo "-q: specify attention method:"
+  echo "    0 = split-cross-attention (default)"
+  echo "    1 = quad-cross-attention"
+  echo "    2 = sage-attention"
+  echo "    3 = pytorch-cross-attention"
   echo "-v: use classic (aggressive) caching"
   echo "-o: switch the amdgpu profile to COMPUTE, see NOTE 1 below (default=$profile_compute)"
   echo "-c: custom parameters to be added to the ComfyUI command line"
@@ -103,6 +107,14 @@ fi
 if [ "$auto_launch" ]; then
   auto_launch="--auto-launch"
 fi
+
+# Replace attention number with the actual parameter
+case "$attention" in
+  0) attention="--use-split-cross-attention" ;;
+  1) attention="--use-quad-cross-attention" ;;
+  2) attention="--use-sage-attention" ;;
+  3) attention="--use-pytorch-cross-attention" ;;
+esac
 
 # Interactive questions
 if [ "$interactive" ]; then
