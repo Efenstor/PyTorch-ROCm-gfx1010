@@ -8,9 +8,11 @@
 4. [Prepare](#prepare)
 5. [Build](#build)
 6. [Troubleshooting](#troubleshooting)
-7. [TorchVision](#torchvision)
-8. [TorchAudio](#torchaudio)
-9. [Extras](#extras)
+7. [Triton](#triton)
+8. [TorchVision](#torchvision)
+9. [TorchAudio](#torchaudio)
+10. [ONNX](#onnx)
+11. [Extras](#extras)
 
 For usage examples (chaiNNer, ComfyUI, etc.) see the \`[usage](usage)\` directory.
 
@@ -122,11 +124,6 @@ Notes:
 3. In the case you're also going to build TorchVision and TorchAudio (which are highly recommended) install it also inside the PyTorch build venv.
 4. If you're installing TorchVision and/or TorchAudio be sure to install PyTorch together with them in a single `pip install` command because they are dependent of the particular PyTorch version.
 
-You can also install [Triton 3.4.0](https://download.pytorch.org/whl/pytorch-triton-rocm/), it seems to be working but I didn't test it too much:
-
-    wget https://download.pytorch.org/whl/pytorch_triton_rocm-3.4.0-cp311-cp311-linux_x86_64.whl
-    pip install pytorch_triton_rocm-3.4.0-cp311-cp311-linux_x86_64.whl
-
 ## Troubleshooting
 
 ### CMake version errors
@@ -136,6 +133,13 @@ You can also install [Triton 3.4.0](https://download.pytorch.org/whl/pytorch-tri
 Compile with this command instead:
 
 CMAKE_BUILD_PARALLEL_LEVEL="$(nproc --all)" MAKEOPTS="-j$(nproc --all)" CMAKE_POLICY_VERSION_MINIMUM=3.5 PYTORCH_ROCM_ARCH=gfx1010 python3 setup.py bdist_wheel
+
+## Triton
+
+[Triton 3.4.0](https://download.pytorch.org/whl/pytorch-triton-rocm/) seems to be working but I didn't test it too much:
+
+    wget https://download.pytorch.org/whl/pytorch_triton_rocm-3.4.0-cp311-cp311-linux_x86_64.whl
+    pip install pytorch_triton_rocm-3.4.0-cp311-cp311-linux_x86_64.whl
 
 ## TorchVision
 
@@ -156,6 +160,28 @@ This built should be done in a venv with the previously built pytorch wheel inst
     CMAKE_BUILD_PARALLEL_LEVEL="$(nproc --all)" MAKEOPTS="-j$(nproc --all)" python3 setup.py bdist_wheel
 
 The resulting wheel will be in the *dist* directory.
+
+## ONNX
+
+Use *onnxruntime-gpu* instead of the normal onnxruntime or onnxruntime-rocm (the latter should work by all means but doesn't).
+
+If you already have *onnxruntime* installed you should uninstall it first (pip uninstall onnxruntime), if you have both onnxruntime and onnxruntime-gpu installed you will have only CPU available.
+
+Install onnxruntime-gpu the normal pip way:
+
+    pip install onnxruntime-gpu
+
+After that you should have the CUDA ONNX backend available in your application.
+
+Some applications such as chaiNNer may complain that ONNX Runtime is missing, just ignore these messages and do not install it from inside the application.
+
+If you're uninstalling onnxruntime after you already have installed onnxruntime-gpu you will probably need to force-reinstall onnxruntime-gpu:
+
+    pip install onnxruntime-gpu --force-reinstall
+
+If in the process you get errors about conflicting numpy versions it is fixable by installing the same version of numpy which was automatically uninstalled during this process (just scroll up the installation log), e.g.:
+
+    pip install numpy==1.24.4
 
 ## Extras
 
