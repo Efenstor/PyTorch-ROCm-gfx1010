@@ -150,6 +150,7 @@ fi
 # Execute
 trap "catchbreak" INT
 env $garbage_collector \
+  MIOPEN_FIND_MODE=FAST \
   bin/python ComfyUI/main.py \
   $lowvram \
   $dsm \
@@ -162,3 +163,4 @@ env $garbage_collector \
   $custom \
   $auto_launch
 uninitialize
+

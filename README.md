@@ -163,25 +163,7 @@ The resulting wheel will be in the *dist* directory.
 
 ## ONNX
 
-Use *onnxruntime-gpu* instead of the normal onnxruntime or onnxruntime-rocm (the latter should work by all means but doesn't).
-
-If you already have *onnxruntime* installed you should uninstall it first (pip uninstall onnxruntime), if you have both onnxruntime and onnxruntime-gpu installed you will have only CPU available.
-
-Install onnxruntime-gpu the normal pip way:
-
-    pip install onnxruntime-gpu
-
-After that you should have the CUDA ONNX backend available in your application.
-
-Some applications such as chaiNNer may complain that ONNX Runtime is missing, just ignore these messages and do not install it from inside the application.
-
-If you're uninstalling onnxruntime after you already have installed onnxruntime-gpu you will probably need to force-reinstall onnxruntime-gpu:
-
-    pip install onnxruntime-gpu --force-reinstall
-
-If in the process you get errors about conflicting numpy versions it is fixable by installing the same version of numpy which was automatically uninstalled during this process (just scroll up the installation log), e.g.:
-
-    pip install numpy==1.24.4
+***STATUS: questionable; it may be possible but requires more investigation***
 
 ## Extras
 
