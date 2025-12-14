@@ -159,7 +159,7 @@ env $garbage_collector \
   $dsm \
   --reserve-vram $reserve_vram \
   --preview-method $preview_method \
-  --fast fp16_accumulation fp8_matrix_mult cublas_ops \
+  --fast \
   --disable-xformers \
   $cache_classic \
   $attention \
