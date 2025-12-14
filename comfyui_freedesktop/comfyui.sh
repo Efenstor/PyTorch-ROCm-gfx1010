@@ -153,6 +153,7 @@ env $garbage_collector \
   MIOPEN_FIND_MODE=FAST \
   TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1 \
   FLASH_ATTENTION_TRITON_AMD_ENABLE=TRUE \
+  HIP_FORCE_DEV_KERNARG=1 \
   bin/python ComfyUI/main.py \
   $lowvram \
   $dsm \
