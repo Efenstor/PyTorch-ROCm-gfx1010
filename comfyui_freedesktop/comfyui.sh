@@ -6,8 +6,8 @@
 # Defaults
 # (use anything for True or nothing for False)
 reserve_vram=0.5
-gc_threshold=0.9
-max_split_size=512
+gc_threshold=0.2
+max_split_size=1024
 preview_method=auto
 auto_launch=1
 garbage_collector=1
@@ -151,12 +151,14 @@ fi
 trap "catchbreak" INT
 env $garbage_collector \
   MIOPEN_FIND_MODE=FAST \
+  TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1 \
+  FLASH_ATTENTION_TRITON_AMD_ENABLE=TRUE \
   bin/python ComfyUI/main.py \
   $lowvram \
   $dsm \
   --reserve-vram $reserve_vram \
   --preview-method $preview_method \
-  --fast \
+  --fast fp16_accumulation fp8_matrix_mult cublas_ops \
   --disable-xformers \
   $cache_classic \
   $attention \
