@@ -56,7 +56,7 @@ Download and install *amdgpu-install* as described [here](https://rocm.docs.amd.
 Download and unpack the missing RocBLAS libraries into */opt/rocm/lib/rocblas/library*:
 
 ```
-wget https://github.com/Efenstor/PyTorch-ROCm-gfx1010/blob/main/prebuilt/rocblas_library_gfx1010.tar.gz
+wget https://github.com/Efenstor/PyTorch-ROCm-gfx1010/raw/refs/heads/main/prebuilt/rocblas_library_gfx1010.tar.gz
 tar xv -f rocblas_library_gfx1010.tar.gz -C /opt/rocm/lib/rocblas/library
 ```
 
