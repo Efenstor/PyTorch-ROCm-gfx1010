@@ -88,7 +88,7 @@ Later to exit the venv execute `deactivate`.
 
 To avoid the \`all warnings being treated as errors\` errors C and CXX flags have to be added to lessen the error policy:
 
-    echo "set(CMAKE_C_FLAGS \"\${CMAKE_CXX_FLAGS} -Wno-error=maybe-uninitialized -Wno-error=uninitialized -Wno-error=restrict\")" >> third_party/fbgemm/CMakeLists.txt
+    echo "set(CMAKE_C_FLAGS \"\${CMAKE_C_FLAGS} -Wno-error=maybe-uninitialized -Wno-error=uninitialized -Wno-error=restrict\")" >> third_party/fbgemm/CMakeLists.txt
     echo "set(CMAKE_CXX_FLAGS \"\${CMAKE_CXX_FLAGS} -Wno-error=maybe-uninitialized -Wno-error=uninitialized -Wno-error=restrict\")" >> third_party/fbgemm/CMakeLists.txt
 
 To avoid the \`error: use of undeclared identifier 'CK_BUFFER_RESOURCE_3RD_DWORD'\` errors patches should be applied (read [here](https://github.com/ROCm/composable_kernel/issues/775#issuecomment-2725632592) about this issue):
