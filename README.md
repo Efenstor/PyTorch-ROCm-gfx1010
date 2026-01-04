@@ -1,4 +1,4 @@
-# PyTorch for Radeon RX 5600/5700 (gfx1010) on Debian 12
+# PyTorch 2.8 for Radeon RX 5600/5700 (gfx1010) on Debian 12
 
 **Contents:**
 
