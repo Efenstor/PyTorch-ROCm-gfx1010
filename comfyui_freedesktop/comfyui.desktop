@@ -1,8 +1,15 @@
 [Desktop Entry]
-Version=1.0
-Type=Application
-Name=ComfyUI
-Icon=comfyui.svg
-Exec=bin/comfyui/comfyui.sh
-Terminal=true
+Actions=
 Categories=Graphics;
+Comment=
+Exec=bin/comfyui/comfyui.sh -a
+Icon=comfyui.svg
+Name=ComfyUI
+NoDisplay=false
+Path=
+PrefersNonDefaultGPU=false
+StartupNotify=true
+Terminal=true
+TerminalOptions=
+Type=Application
+
