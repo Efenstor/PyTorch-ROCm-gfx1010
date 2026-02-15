@@ -1,3 +1,4 @@
+
 #!/bin/sh
 # copyleft 2025-2026 Efenstor
 
@@ -5,11 +6,9 @@
 
 # The defaults should be almost crash-safe
 # (use anything for True or nothing for False)
-# NOTE: don't go lower than 1.0 for reserve_vram because the window compositor
-# and the browser also need VRAM and cause spikes up to 0.5GB
 reserve_vram=1.0    # default = 1.0
-gc_threshold=0.2    # default = 0.8
-max_split_size=128  # default = 128
+gc_threshold=0.6    # default = 0.6
+max_split_size=256  # default = 256
 preview_method=auto
 auto_launch=1
 garbage_collector=1
@@ -103,9 +102,6 @@ NOTE 1: For this option to work the profile file must be user-writable.
   exit
 fi
 
-# Recalculate reserve_vram (empyrically it has to be x10 for some reason)
-reserve_vram=$(echo "$reserve_vram * 10.0" | bc)
-
 # Replace bool with actual parameters
 if [ "$garbage_collector" ]; then
   garbage_collector="PYTORCH_HIP_ALLOC_CONF=garbage_collection_threshold:$gc_threshold,max_split_size_mb:$max_split_size,expandable_segments:True"
@@ -169,6 +165,5 @@ env $garbage_collector \
   $custom \
   $auto_launch
 
-# Experimental:
-#  HIP_FORCE_DEV_KERNARG=1 \
+# Experimental
 #  TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1 \
