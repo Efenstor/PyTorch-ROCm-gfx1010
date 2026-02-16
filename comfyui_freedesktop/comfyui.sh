@@ -4,6 +4,9 @@
 
 # Run with -h or -? to display help
 
+# To use with Zluda (https://github.com/vosen/ZLUDA) put the Zluda files to
+# <script_dir>/lib
+
 # The defaults should be almost crash-safe
 # (use anything for True or nothing for False)
 reserve_vram=1.0    # default = 1.0
@@ -42,7 +45,9 @@ catchbreak() {
   exit 1
 }
 
-cd "$(dirname $0)"
+# Change dir
+script_dir="$(dirname $0)"
+cd "$script_dir"
 
 # Parse the named parameters
 optstr="?hildagr:t:s:p:q:voc:"
@@ -101,6 +106,9 @@ NOTE 1: For this option to work the profile file must be user-writable.
   echo
   exit
 fi
+
+# Add the local lib path (for Zluda)
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:""$script_dir"/lib
 
 # Replace bool with actual parameters
 if [ "$garbage_collector" ]; then
