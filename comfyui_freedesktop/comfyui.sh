@@ -1,4 +1,3 @@
-
 #!/bin/sh
 # copyleft 2025-2026 Efenstor
 
@@ -11,7 +10,7 @@
 # (use anything for True or nothing for False)
 reserve_vram=1.0    # default = 1.0
 gc_threshold=0.6    # default = 0.6
-max_split_size=256  # default = 256
+max_split_size=512  # default = 256
 preview_method=auto
 auto_launch=1
 garbage_collector=1
@@ -24,6 +23,7 @@ interactive=
 lowvram=
 dsm=
 custom=
+caffeinate=
 
 get_current_profile() {
   echo $(cat "$1" | sed -n "s/ *\([0-9]*\).*\*.*/\1/p")
@@ -38,6 +38,7 @@ uninitialize() {
     echo "Restoring the old amdgpu profile: $prev_profile ($prev_profile_name)"
     echo $prev_profile > "$profile_path"
   fi
+  rm -f "$launcher"
 }
 
 catchbreak() {
@@ -50,7 +51,7 @@ script_dir="$(dirname $0)"
 cd "$script_dir"
 
 # Parse the named parameters
-optstr="?hildagr:t:s:p:q:voc:"
+optstr="?hildafgr:t:s:p:q:voc:"
 while getopts $optstr opt
 do
   case "$opt" in
@@ -59,6 +60,7 @@ do
     l) lowvram="--lowvram" ;;
     d) dsm="--disable-smart-memory" ;;
     a) auto_launch= ;;
+    f) caffeinate=1 ;;
     g) garbage_collector= ;;
     r) reserve_vram="$OPTARG" ;;
     t) gc_threshold="$OPTARG" ;;
@@ -85,6 +87,7 @@ if [ "$help" ]; then
   echo "-l: use --lowvram (makes everything very slow but fights OOM errors)"
   echo "-d: disable smart memory (same as -l but different strategy)"
   echo "-a: don't auto-launch browser"
+  echo "-f: prevent sleep (requires the caffeine tool)"
   echo "-g: don't use garbage collector"
   echo "-r: reserve_vram size (GB, default=$reserve_vram)"
   echo "-t: garbage collector threshold (0..1 VRAM, default=$gc_threshold)"
@@ -156,22 +159,31 @@ if [ "$switch_profile" ]; then
   fi
 fi
 
+# Create the launcher file
+launcher=$(mktemp)
+echo '#!/bin/sh' > "$launcher"
+echo "export $garbage_collector
+export MIOPEN_FIND_MODE=FAST
+export FLASH_ATTENTION_TRITON_AMD_ENABLE=TRUE
+export TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1
+bin/python ComfyUI/main.py \
+$lowvram \
+$dsm \
+--reserve-vram $reserve_vram \
+--preview-method $preview_method \
+--fast \
+--fp32-vae \
+$cache_classic \
+$attention \
+$custom \
+$auto_launch" >> "$launcher"
+chmod +x "$launcher"
+
 # Execute
 trap "catchbreak" INT
-env $garbage_collector \
-  MIOPEN_FIND_MODE=FAST \
-  FLASH_ATTENTION_TRITON_AMD_ENABLE=TRUE \
-  bin/python ComfyUI/main.py \
-  $lowvram \
-  $dsm \
-  --reserve-vram $reserve_vram \
-  --preview-method $preview_method \
-  --fast \
-  --fp32-vae \
-  $cache_classic \
-  $attention \
-  $custom \
-  $auto_launch
-
-# Experimental
-#  TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1 \
+if [ "$caffeinate" ]; then
+  caffeinate "$launcher"
+else
+  "$launcher"
+fi
+uninitialize
