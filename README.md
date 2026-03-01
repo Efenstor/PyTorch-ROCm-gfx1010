@@ -16,6 +16,8 @@
 
 For usage examples (chaiNNer, ComfyUI, etc.) see the \`[usage](usage)\` directory.
 
+**ADVICE:** To reduce the chance of VRAM overload when using Mozilla Firefox with ComfyUI on the same machine create and use a separate browser profile, for which you should disable the graphics acceleration: open the `about:config` page and set the following keys: `gfx.canvas.accelerated = false`, `layers.acceleration.disabled = true`. If you are using a desktop environment with hardware-accelerated compositing (e.g. Gnome or KDE), disable animations and try to avoid switching to other applications during image generation.
+
 ## Pre-built wheels
 
 Pre-built wheels of PyTorch, TorchVision and TorchAudio (built for ROCm 6.4.3 and Python 3.11) are located in the \`prebuilt\` directory.
