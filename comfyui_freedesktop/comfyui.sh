@@ -8,9 +8,9 @@
 
 # The defaults should be almost crash-safe
 # (use anything for True or nothing for False)
-reserve_vram=1.0    # default = 1.0
+reserve_vram=2.0    # default = 1.0
 gc_threshold=0.6    # default = 0.6
-max_split_size=512  # default = 256
+max_split_size=256  # default = 256
 preview_method=auto
 auto_launch=1
 garbage_collector=1
@@ -163,21 +163,24 @@ fi
 launcher=$(mktemp)
 echo '#!/bin/sh' > "$launcher"
 echo "export $garbage_collector
-export MIOPEN_FIND_MODE=FAST
+export MIOPEN_FIND_MODE=2
 export FLASH_ATTENTION_TRITON_AMD_ENABLE=TRUE
-export TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1
 bin/python ComfyUI/main.py \
 $lowvram \
 $dsm \
+--normalvram \
 --reserve-vram $reserve_vram \
 --preview-method $preview_method \
 --fast \
---fp32-vae \
 $cache_classic \
 $attention \
 $custom \
 $auto_launch" >> "$launcher"
 chmod +x "$launcher"
+
+# excluded options
+#export TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1
+#--fp32-vae \
 
 # Execute
 trap "catchbreak" INT
@@ -187,3 +190,4 @@ else
   "$launcher"
 fi
 uninitialize
+
