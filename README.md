@@ -1,5 +1,7 @@
 # PyTorch 2.8 for Radeon RX 5600/5700 (gfx1010) on Debian 12
 
+**IMPORTANT:** The version for Debian 13 (trixie) can be found here: https://github.com/Efenstor/PyTorch-ROCm-gfx1010-Debian13
+
 **Contents:**
 
 1. [Pre-built wheels](#pre-built-wheels)
@@ -13,8 +15,6 @@
 9. [TorchAudio](#torchaudio)
 10. [ONNX](#onnx)
 11. [Extras](#extras)
-
-**IMPORTANT:** The version for Debian 13 is here: https://github.com/Efenstor/PyTorch-ROCm-gfx1010-Debian13
 
 For usage examples (chaiNNer, ComfyUI, etc.) see the \`[usage](usage)\` directory.
 
